@@ -1,0 +1,64 @@
+name: Build & Test Bhabhi Thulla
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build, Test & Package Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Run code validation & linting
+        run: npm run lint
+
+      - name: Run automated game engine unit tests
+        run: npm test
+
+      - name: Build production distribution
+        run: npm run build
+
+      - name: Package production artifact bundle
+        run: |
+          mkdir -p release-bundle
+          cp -r dist release-bundle/
+          cp -r src release-bundle/
+          cp server.ts release-bundle/
+          cp package.json release-bundle/
+          cp tsconfig.json release-bundle/
+          cp .env.example release-bundle/
+          if [ -f package-lock.json ]; then
+            cp package-lock.json release-bundle/
+          fi
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bhabhi-thulla-release-${{ github.sha }}
+          path: release-bundle/
+          retention-days: 30
+          if-no-files-found: error

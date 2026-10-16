@@ -1,0 +1,6 @@
+{
+  "name": "Bhabhi Thulla - Pakistani Multiplayer Card Game",
+  "description": "Authentic Pakistani multiplayer card game Bhabhi Thulla (Get Away) with real-time lobbies, 3-4 players, AI opponents, Thulla impact effects, and Urdu commentary.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
